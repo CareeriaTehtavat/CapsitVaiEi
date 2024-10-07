@@ -1,4 +1,4 @@
-# Aut# Capsit vai ei?
+Capsit vai ei?
 
 ## JOHDANTO
 - Muista aina hyödyntää jo aiemmin oppimaasi!
