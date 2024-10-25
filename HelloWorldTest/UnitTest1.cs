@@ -1,23 +1,21 @@
+
+
+
 using HelloWorld; // Ensure this is the correct namespace for the Program class
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace HelloWorldTest
 {
     public class UnitTest1
     {
-        [Theory]
-        [InlineData("Matti", "JalkapaLLo", "Helsinki", "matti, jalkapallo, HELSINKI")]
-        [InlineData("Liisa", "Lukeminen", "Tampere", "liisa, lukeminen, TAMPERE")]
-        [InlineData("Pekka", "uimInen", "Oulu", "pekka, uiminen, OULU")]
-        [Trait("TestGroup", "Test_SanaManipulations")]
 
-        public void Test_SanaManipulations(string nimi, string harrastus, string kaupunki, string expectedOutput)
+
+        //Harjoitus - PiirtelyÃ¤
+        [Fact]
+        [Trait("TestGroup", "ArtPrinting")]
+        public void ArtPrinting()
         {
-            // Arrange: Simulate console input
-            var inputReader = new StringReader(nimi + '\n' + kaupunki + "\n" + harrastus + "\n");
-            Console.SetIn(inputReader);
 
             var sw = new StringWriter();
             Console.SetOut(sw);
@@ -26,55 +24,33 @@ namespace HelloWorldTest
             HelloWorld.Program.Main(null);
 
             var result = sw.ToString().Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)
-                         .Where(line => !string.IsNullOrWhiteSpace(line))
                          .ToArray();
 
 
             // Assert: Verify output
-            Assert.True(LineContainsIgnoreSpaces(expectedOutput, result[3]), "Expected: " + expectedOutput
-                + " printed: " + result[3]);
+            Assert.True(HaveSame("   *", result[0]), "row 1 Expected: " + "   *"
+                + " printed: " + result[0]);
+            Assert.True(string.IsNullOrWhiteSpace(result[1]), "row 2 Expected: " + ""
+    + " printed: " + result[1]);
 
+            Assert.True(HaveSame("   *", result[2]), "row 3 Expected: " + "   *"
+                + " printed: " + result[2]);
+
+            Assert.True(HaveSame("  ***", result[3]), "row 4 Expected: " + "   *"
+               + " printed: " + result[3]);
+
+            Assert.True(HaveSame(" *****", result[4]), "row 5 Expected: " + "   *"
+               + " printed: " + result[4]);
+            Assert.True(HaveSame("*******", result[5]), "row 6 Expected: " + "   *"
+               + " printed: " + result[5]);
         }
 
-
-        [Theory]
-        [InlineData("Matti", "JalkapaLLo", "Helsinki", "matti, jalkapallo, HELSINKI")]
-        [InlineData("Liisa", "Lukeminen", "Tampere", "liisa, lukeminen, TAMPERE")]
-        [InlineData("Pekka", "uimInen", "Oulu", "pekka, uiminen, OULU")]
-        [Trait("TestGroup", "Test_Muutos")]
-
-        public void Test_Muutos(string nimi, string harrastus, string kaupunki, string expectedOutput)
+        public bool HaveSame(string expected, string Goted)
         {
-            // Act
-            var result = HelloWorld.Program.Muutos(nimi, kaupunki, harrastus);
+            return expected.Contains(Goted.Trim());
 
-            // Assert
-            Assert.True(LineContainsIgnoreSpaces(expectedOutput, result));
+
         }
-
-        private bool LineContainsIgnoreSpaces(string expectedText, string line)
-        {
-            // Remove all whitespace and convert to lowercase
-            string normalizedLine = Regex.Replace(line, @"[\s.,]+", "").ToLower();
-            string normalizedExpectedText = Regex.Replace(expectedText, @"[\s.,]+", "").ToLower();
-
-            // Create a regex pattern to allow any character for "ä", "ö", "a", and "o"
-            string pattern = Regex.Escape(normalizedExpectedText)
-                                  .Replace("ö", ".")  // Allow any character for "ö"
-                                  .Replace("ä", ".")  // Allow any character for "ä"
-                                  .Replace("a", ".")  // Allow any character for "a"
-                                  .Replace("o", ".");  // Allow any character for "o"
-
-            // Check if the line matches the pattern, ignoring case
-            return Regex.IsMatch(normalizedLine, pattern, RegexOptions.IgnoreCase);
-        }
-
-
-        private int CountWords(string line)
-        {
-            return line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length;
-        }
-
         private bool CompareLines(string[] actualLines, string[] expectedLines)
         {
             if (actualLines.Length != expectedLines.Length)
@@ -95,4 +71,7 @@ namespace HelloWorldTest
 
     }
 }
+
+
+    
 
